@@ -50,14 +50,28 @@ fun gamePage(
             modifier = Modifier.matchParentSize(),
         ) {
             gameToolbar(isPaused)
-            Row(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.Top
+                    .weight(1f)
+                    .fillMaxSize()
             ) {
-                drawGameMinimap(gameField = gameField)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    drawGameMinimap(gameField = gameField, size = 260.dp)
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Top
+                ) {
+                    drawGameMinimap(gameField = gameField)
+                }
             }
         }
         if (isPaused.value) {
