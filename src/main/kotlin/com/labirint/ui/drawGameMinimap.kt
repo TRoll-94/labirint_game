@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.*
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.labirint.game.*
@@ -23,13 +24,14 @@ import com.labirint.util.dpToPx
 @Composable
 fun drawGameMinimap(
     gameField: GameField,
-    modifier: Modifier = Modifier.size(150.dp),
+    modifier: Modifier = Modifier,
+    size: Dp = 150.dp,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val gameFieldInner = getNearCells(gameField)
-    val cellSize = dpToPx(150.dp) / gameFieldInner.size.width
+    val cellSize = dpToPx(size) / gameFieldInner.size.width
     Canvas(
-        modifier = modifier,
+        modifier = modifier.size(size),
     ) {
         gameFieldInner.field.flatten().forEachIndexed { index, cell ->
             val alpha = calculateAlpha(cell, gameField)
