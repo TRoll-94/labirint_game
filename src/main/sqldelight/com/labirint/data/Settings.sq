@@ -1,0 +1,23 @@
+CREATE TABLE settings (
+    settingsName TEXT NOT NULL UNIQUE PRIMARY KEY,
+    settingsValue TEXT NOT NULL
+);
+
+CREATE INDEX settings_name_index ON settings (settingsName);
+
+INSERT INTO settings (settingsName, settingsValue) VALUES ('lang', 'pl');
+INSERT INTO settings (settingsName, settingsValue) VALUES ('difficulty', 'easy');
+
+
+selectAll:
+SELECT * FROM settings;
+
+getByNameSettingsObject:
+SELECT * FROM settings WHERE settingsName = ?;
+
+insertOrUpdateSettingsObject:
+INSERT OR REPLACE INTO settings(settingsName, settingsValue)
+VALUES ?;
+
+updateSettingsObject:
+UPDATE settings SET settingsValue = ? WHERE settingsName = ?;
