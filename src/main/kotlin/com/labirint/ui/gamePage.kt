@@ -61,8 +61,12 @@ fun gamePage(
                         .padding(8.dp),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    drawGameMinimap(gameField = gameField, gameModifiers = DrawGameCanvasModifiers(
-                            size = 200.dp
+                    drawGameMinimap(gameField = gameField,
+                        gameModifiers = DrawGameCanvasModifiers(
+                            size = 260.dp,
+                            visibleNestedCells = 1,
+                            showDiagonals = false,
+                            isInteractive = true,
                         )
                     )
                 }

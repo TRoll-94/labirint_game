@@ -129,6 +129,10 @@ fun getNearCells(gameField: GameField, gameModifiers: DrawGameCanvasModifiers): 
     for (y in yStart..yEnd) {
         val row = mutableListOf<FieldCell>()
         for (x in xStart..xEnd) {
+            if (!gameModifiers.showDiagonals && (x != currentCell.x && y != currentCell.y)) {
+                row.add(FieldCell(number = -1, position = CellPosition(x, y), size = FieldSize(0, 0)))
+                continue
+            }
             if (x < 0 || y < 0 || x >= field[0].size || y >= field.size) {
                 row.add(FieldCell(number = -1, position = CellPosition(x, y), size = FieldSize(0, 0)))
             } else {
