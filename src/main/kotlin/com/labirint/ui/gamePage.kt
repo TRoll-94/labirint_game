@@ -49,25 +49,7 @@ fun gamePage(
         Column(
             modifier = Modifier.matchParentSize(),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(Localization.getString("gamePage"), color = ProjectColors.white)
-                Button(
-                    onClick = { isPaused.value = !isPaused.value },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = ProjectColors.transparent, contentColor = ProjectColors.white
-                    ),
-                    border = BorderStroke(0.dp, ProjectColors.white),
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier.padding(0.dp).height(24.dp).width(24.dp),
-
-                    ) {
-                    Text("II", modifier = Modifier.padding(0.dp))
-                }
-            }
+            gameToolbar(isPaused)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
