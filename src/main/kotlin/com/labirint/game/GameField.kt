@@ -61,6 +61,35 @@ class GameField(
         return goodCells.random()
     }
 
+    fun getDistanceTo(cell: FieldCell): Int {
+        return kotlin.math.abs(cell.position.x - currentCell.position.x) +
+                kotlin.math.abs(cell.position.y - currentCell.position.y)
+    }
+
+    fun isPossibleCellMove(cell: FieldCell): Boolean {
+        val distance = getDistanceTo(cell)
+        val directions = Coreutils.cellDirection(currentCell)
+        if (distance == 1) {
+            if (cell.position.x == currentCell.position.x) {
+                if (cell.position.y == currentCell.position.y - 1) {
+                    return directions.up
+                }
+                if (cell.position.y == currentCell.position.y + 1) {
+                    return directions.down
+                }
+            }
+            if (cell.position.y == currentCell.position.y) {
+                if (cell.position.x == currentCell.position.x - 1) {
+                    return directions.left
+                }
+                if (cell.position.x == currentCell.position.x + 1) {
+                    return directions.right
+                }
+            }
+        }
+        return false
+    }
+
     fun move(direction: CellDirection) {
         val newPosition = when (direction) {
             CellDirection.UP -> CellPosition(currentCell.position.x, currentCell.position.y - 1)

@@ -2,7 +2,8 @@ package com.labirint.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -12,6 +13,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,7 @@ data class DrawGameCanvasModifiers (
 )
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun drawGameMinimap(
     gameField: GameField,
@@ -39,13 +42,28 @@ fun drawGameMinimap(
     val textMeasurer = rememberTextMeasurer()
     val gameFieldInner = getNearCells(gameField, gameModifiers = gameModifiers)
     val cellSize = dpToPx(gameModifiers.size) / gameFieldInner.size.width
+    var mousePosition by remember { mutableStateOf(Offset.Unspecified) }
     Canvas(
-        modifier = modifier.size(gameModifiers.size),
+        modifier = modifier.size(gameModifiers.size).pointerMoveFilter(
+            onMove = {
+                if (gameModifiers.isInteractive) {
+                    mousePosition = it
+                }
+                true
+            },
+            onExit = {
+                mousePosition = Offset.Unspecified
+                false
+            }
+        ),
+
     ) {
         gameFieldInner.field.flatten().forEachIndexed { index, cell ->
             val alpha = calculateAlpha(cell, gameField)
             val x = index % gameFieldInner.size.width
             val y = index / gameFieldInner.size.width
+            val cellPosition = Offset(x.toFloat(), y.toFloat())
+            val isMouseOver = isCursorInCell(mousePosition, cellPosition, cellSize)
             drawIntoCanvas {
                 withTransform({
                     translate(
@@ -54,11 +72,7 @@ fun drawGameMinimap(
                     )
                 }) {
                     drawRect(
-                        color = if (cell.number == 0) {
-                            ProjectColors.secondary
-                        } else {
-                            ProjectColors.miniMapCell.copy(alpha = alpha)
-                        },
+                        color = getCellBgColor(gameFieldInner, cell, isMouseOver, alpha),
                         size = Size(cellSize, cellSize)
                     )
                     drawRect(
@@ -148,41 +162,39 @@ fun getNearCells(gameField: GameField, gameModifiers: DrawGameCanvasModifiers): 
 
 }
 
+fun isCursorInCell(cursorPosition: Offset, cellPosition: Offset, cellSize: Float): Boolean {
+    if (cursorPosition == Offset.Unspecified) {
+        return false
+    }
+    return cursorPosition.x >= cellPosition.x * cellSize &&
+            cursorPosition.x <= (cellPosition.x + 1) * cellSize &&
+            cursorPosition.y >= cellPosition.y * cellSize &&
+            cursorPosition.y <= (cellPosition.y + 1) * cellSize
+}
+
+fun getCellBgColor(gameField: GameField, cell: FieldCell, isMouseOver: Boolean, alpha: Float): Color {
+    return when {
+        cell.number == 0 -> ProjectColors.secondary
+        (cell.number == -1 && isMouseOver) -> ProjectColors.error.copy(alpha = 0.2f)
+        (cell == gameField.currentCell) -> ProjectColors.miniMapCell.copy(alpha = alpha)
+        (!gameField.isPossibleCellMove(cell) && isMouseOver) -> ProjectColors.error.copy(alpha = 0.2f)
+        isMouseOver -> ProjectColors.miniMapCell.copy(alpha = alpha * 0.5f)
+        else -> ProjectColors.miniMapCell.copy(alpha = alpha)
+    }
+}
+
 private fun calculateAlpha(cell: FieldCell, gameField: GameField): Float {
     if (cell.number == -1) {
         return 0.0f
     }
-    val distance = kotlin.math.abs(cell.position.x - gameField.currentCell.position.x) +
-            kotlin.math.abs(cell.position.y - gameField.currentCell.position.y)
-    val directions = Coreutils.cellDirection(gameField.currentCell)
+
 
     if (cell.number == 0) {
         return 0.9f
-    } else if (distance == 1) {
-        if (cell.position.x == gameField.currentCell.position.x) {
-            if (cell.position.y == gameField.currentCell.position.y - 1) {
-                return if (directions.up) .8f else 0.0f
-            }
-            if (cell.position.y == gameField.currentCell.position.y + 1) {
-                return if (directions.down) .8f else 0.0f
-            }
-        }
-        if (cell.position.y == gameField.currentCell.position.y) {
-            if (cell.position.x == gameField.currentCell.position.x - 1) {
-                return if (directions.left) .8f else 0.0f
-            }
-            if (cell.position.x == gameField.currentCell.position.x + 1) {
-                return if (directions.right) .8f else 0.0f
-            }
-        }
-    } else if (distance == 0) {
+    } else if (gameField.isPossibleCellMove(cell)) {
+        return 0.8f
+    } else if (cell == gameField.currentCell) {
         return 1.0f
     }
     return 0.0f
-
-//    return when (distance) {
-//        0 -> 1.0f
-//        1 -> 0.8f
-//        else -> 0.2f
-//    }
 }
