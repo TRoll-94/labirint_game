@@ -21,17 +21,26 @@ import com.labirint.util.ProjectColors
 import com.labirint.util.dpToPx
 
 
+data class DrawGameCanvasModifiers (
+    val size: Dp = 150.dp,
+    val visibleNestedCells: Int = 2,
+    val showDiagonals: Boolean = true,
+    val isInteractive: Boolean = false,
+    val showBorders: Boolean = true,
+)
+
+
 @Composable
 fun drawGameMinimap(
     gameField: GameField,
     modifier: Modifier = Modifier,
-    size: Dp = 150.dp,
+    gameModifiers: DrawGameCanvasModifiers = DrawGameCanvasModifiers(),
 ) {
     val textMeasurer = rememberTextMeasurer()
-    val gameFieldInner = getNearCells(gameField)
-    val cellSize = dpToPx(size) / gameFieldInner.size.width
+    val gameFieldInner = getNearCells(gameField, gameModifiers = gameModifiers)
+    val cellSize = dpToPx(gameModifiers.size) / gameFieldInner.size.width
     Canvas(
-        modifier = modifier.size(size),
+        modifier = modifier.size(gameModifiers.size),
     ) {
         gameFieldInner.field.flatten().forEachIndexed { index, cell ->
             val alpha = calculateAlpha(cell, gameField)
@@ -105,15 +114,15 @@ fun drawGameMinimap(
 }
 
 
-fun getNearCells(gameField: GameField, maxNear: Int = 2): GameField {
+fun getNearCells(gameField: GameField, gameModifiers: DrawGameCanvasModifiers): GameField {
     val currentCell = gameField.currentCell.position
     val result = GameField()
     val field = gameField.field
 
-    val xStart = currentCell.x - maxNear
-    val xEnd = currentCell.x + maxNear
-    val yStart = currentCell.y - maxNear
-    val yEnd = currentCell.y + maxNear
+    val xStart = currentCell.x - gameModifiers.visibleNestedCells
+    val xEnd = currentCell.x + gameModifiers.visibleNestedCells
+    val yStart = currentCell.y - gameModifiers.visibleNestedCells
+    val yEnd = currentCell.y + gameModifiers.visibleNestedCells
 
     val cells = mutableListOf<List<FieldCell>>()
 
@@ -129,7 +138,7 @@ fun getNearCells(gameField: GameField, maxNear: Int = 2): GameField {
         cells.add(row)
     }
     result.field = cells
-    result.currentCell = result.findCellByPosition(CellPosition(maxNear, maxNear))
+    result.currentCell = result.findCellByPosition(CellPosition(gameModifiers.visibleNestedCells, gameModifiers.visibleNestedCells))
     result.size = FieldSize(result.field[0].size, result.field.size)
     return result
 
