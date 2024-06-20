@@ -25,10 +25,12 @@ import pauseDialog
 
 
 @Composable
-fun gamePage(router: Router) {
+fun gamePage(
+    router: Router,
+    gameField: GameField
+) {
     val isPaused = remember { mutableStateOf(false) }
     val requester = remember { FocusRequester() }
-    val gameField = remember { GameField() }
     Box(
         modifier = Modifier
             .fillMaxSize()

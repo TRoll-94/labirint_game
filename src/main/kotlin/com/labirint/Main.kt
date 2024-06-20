@@ -6,6 +6,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.labirint.game.GameField
 import com.labirint.ui.*
 import com.labirint.util.Localization
 
@@ -25,7 +26,9 @@ object Router {
         Page.MainMenu to PageConfig(Localization.getString("gameTitle")) { router -> mainMenu(router) },
         Page.SettingsPage to PageConfig(Localization.getString("settingsTitle")) { router -> settingsPage(router) },
         Page.NotFound to PageConfig(Localization.getString("pageNotFound")) { router -> notFound(router) },
-        Page.GamePage to PageConfig(Localization.getString("gameTitle")) { router -> gamePage(router) },
+        Page.GamePage to PageConfig(Localization.getString("gameTitle")) { router -> gamePage(
+            router, gameField = GameField()
+        ) },
     )
 
     fun setPage(page: Page) {
