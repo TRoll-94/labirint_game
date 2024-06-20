@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -31,6 +28,7 @@ fun gamePage(
 ) {
     val isPaused = remember { mutableStateOf(false) }
     val requester = remember { FocusRequester() }
+    var currentCell by remember { mutableStateOf(gameField.currentCell) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -62,13 +60,20 @@ fun gamePage(
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     drawGameMinimap(gameField = gameField,
+                        currentCell = currentCell,
                         gameModifiers = DrawGameCanvasModifiers(
                             size = 260.dp,
                             visibleNestedCells = 1,
                             showDiagonals = false,
                             isInteractive = true,
                         )
-                    )
+                    ) {_gameField, cell ->
+                        println(cell.number)
+                        if (_gameField.isPossibleCellMove(cell)) {
+                            currentCell = cell
+                            gameField.currentCell = cell
+                        }
+                    }
                 }
                 Row(
                     modifier = Modifier
@@ -77,7 +82,7 @@ fun gamePage(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.Top
                 ) {
-                    drawGameMinimap(gameField = gameField)
+                    drawGameMinimap(gameField = gameField, currentCell = currentCell,)
                 }
             }
         }

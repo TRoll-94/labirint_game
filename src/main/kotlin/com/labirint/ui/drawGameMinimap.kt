@@ -1,6 +1,7 @@
 package com.labirint.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -13,6 +14,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.Dp
@@ -36,8 +38,10 @@ data class DrawGameCanvasModifiers (
 @Composable
 fun drawGameMinimap(
     gameField: GameField,
+    currentCell: FieldCell,
     modifier: Modifier = Modifier,
     gameModifiers: DrawGameCanvasModifiers = DrawGameCanvasModifiers(),
+    onCellClick: (GameField, FieldCell) -> Unit = { _, _ -> }
 ) {
     val textMeasurer = rememberTextMeasurer()
     val gameFieldInner = getNearCells(gameField, gameModifiers = gameModifiers)
@@ -55,7 +59,16 @@ fun drawGameMinimap(
                 mousePosition = Offset.Unspecified
                 false
             }
-        ),
+        ).pointerInput(Unit) {
+            detectTapGestures { offset ->
+                if (!gameModifiers.isInteractive) {
+                    return@detectTapGestures
+                } else {
+                    val clickedCell = getCellAtPosition(offset, cellSize, gameFieldInner)
+                    clickedCell?.let { onCellClick(gameFieldInner, it) }
+                }
+            }
+        },
 
     ) {
         gameFieldInner.field.flatten().forEachIndexed { index, cell ->
@@ -87,7 +100,7 @@ fun drawGameMinimap(
                     val textToDraw = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                color = if (cell.position == gameFieldInner.currentCell.position || cell.number == 0) {
+                                color = if (cell.position == currentCell.position || cell.number == 0) {
                                     Color.White
                                 } else {
                                     Color.Gray
@@ -160,6 +173,13 @@ fun getNearCells(gameField: GameField, gameModifiers: DrawGameCanvasModifiers): 
     result.size = FieldSize(result.field[0].size, result.field.size)
     return result
 
+}
+
+fun getCellAtPosition(offset: Offset, cellSizePx: Float, gameField: GameField): FieldCell? {
+    val x = (offset.x / cellSizePx).toInt()
+    val y = (offset.y / cellSizePx).toInt()
+
+    return gameField.field.getOrNull(y)?.getOrNull(x)
 }
 
 fun isCursorInCell(cursorPosition: Offset, cellPosition: Offset, cellSize: Float): Boolean {
