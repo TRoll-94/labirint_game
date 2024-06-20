@@ -10,15 +10,7 @@ import kotlin.random.Random
 //    listOf(6, 5, 6, 5),
 //)
 
-var testMap = generateRandomField(15, 15, 0..100)
-
-fun generateRandomField(rows: Int, cols: Int, range: IntRange): List<List<Int>> {
-    return List(rows) {
-        List(cols) {
-            Random.nextInt(range.first, range.last + 1)
-        }
-    }
-}
+var testMap = LabirintGenerator.generateArray()
 
 class GameField(
     var size: FieldSize = FieldSize(4, 4),
