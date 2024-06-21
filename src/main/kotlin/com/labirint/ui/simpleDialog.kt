@@ -10,9 +10,13 @@ import com.labirint.util.Localization
 
 
 @Composable
-fun winDialog(onNewGame: () -> Unit, onExit: () -> Unit) {
+fun simpleDialog(
+    onExit: @Composable (() -> Unit),
+    title: String,
+) {
+    val isExit = remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = { onNewGame() }) {
+    Dialog(onDismissRequest = { isExit.value = true }) {
         // Подложка диалога
         Surface(
             shape = MaterialTheme.shapes.medium,  // Используем формы из текущей темы
@@ -22,24 +26,15 @@ fun winDialog(onNewGame: () -> Unit, onExit: () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(Localization.getString("your_win"), style = MaterialTheme.typography.h6)
+                Text(title, style = MaterialTheme.typography.h6)
 
                 Spacer(modifier = Modifier.height(20.dp))
-
-                Button(
-                    onClick = {
-                        onNewGame()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(Localization.getString("new_game"))
-                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
                     onClick = {
-                        onExit()
+                        isExit.value = true
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -47,5 +42,9 @@ fun winDialog(onNewGame: () -> Unit, onExit: () -> Unit) {
                 }
             }
         }
+    }
+    if (isExit.value) {
+        onExit()
+        isExit.value = false
     }
 }

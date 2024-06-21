@@ -11,9 +11,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import com.labirint.Router
+import com.labirint.game.Coreutils
 import com.labirint.game.GameField
+import com.labirint.util.Localization
 import com.labirint.util.ProjectColors
 import pauseDialog
+import simpleDialog
 
 
 @Composable
@@ -24,6 +27,19 @@ fun gamePage(
     var currentCell by remember { mutableStateOf(gameField.findStartCell()) }
     val isPaused = remember { mutableStateOf(false) }
     val requester = remember { FocusRequester() }
+    val directions = Coreutils.cellDirection(currentCell, gameField)
+    if (currentCell.number == 0) {
+        simpleDialog(
+            title = Localization.getString("your_win"),
+            onExit = { router.mainPage() }
+        )
+    } else if (!directions.up && !directions.down && !directions.left && !directions.right) {
+        simpleDialog(
+            title = Localization.getString("your_lose"),
+            onExit = { router.mainPage() }
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

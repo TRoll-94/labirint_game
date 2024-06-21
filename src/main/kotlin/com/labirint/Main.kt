@@ -5,7 +5,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.labirint.game.GameField
 import com.labirint.ui.*
 import com.labirint.util.Localization
 
@@ -20,8 +19,6 @@ object Router {
     }
 
     private var currentPage by mutableStateOf(Page.GamePage)
-
-
 
     private val pages = mapOf(
         Page.MainMenu to PageConfig(Localization.getString("gameTitle")) { router -> mainMenu(router) },
