@@ -4,7 +4,14 @@ package com.labirint.game
 class FieldCell(
     val number: Int,
     val position: CellPosition,
-    val size: FieldSize,
+    val code: String = "${number}_${position.x}_${position.y}"
 ) {
-    val directions: CellPossibleDirections = Coreutils.cellDirection(this)
+
+    fun copy(
+        number: Int = this.number,
+        position: CellPosition = this.position,
+        code: String = this.code
+    ): FieldCell {
+        return FieldCell(number, position, code)
+    }
 }

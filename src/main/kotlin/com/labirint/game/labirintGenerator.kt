@@ -2,10 +2,10 @@ package com.labirint.game
 
 import java.util.*
 
-object LabirintGenerator {
-    const val WIDTH = 5
-    private const val START = 21
-    private const val END = 0
+class LabirintGenerator {
+    var WIDTH = 7
+    private var START = 21
+    private var END = 0
 
     private val DIRECTIONS = arrayOf(
         intArrayOf(0, -1),   // left
@@ -46,8 +46,6 @@ object LabirintGenerator {
         return false
     }
 
-
-    @JvmStatic
     fun generateArray(): Array<IntArray> {
         val array = Array(WIDTH) { IntArray(WIDTH) }
         val rand = Random()

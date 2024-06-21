@@ -26,12 +26,12 @@ data class FieldSize (
 
 object Coreutils {
 
-    fun cellDirection(cell: FieldCell): CellPossibleDirections {
+    fun cellDirection(cell: FieldCell, gameField: GameField): CellPossibleDirections {
         val directions = CellPossibleDirections(
-            up = (cell.number and 4) != 0 && cell.position.y > 0,
-            down = (cell.number and 8) != 0 && cell.position.y < cell.size.height - 1,
-            left = (cell.number and 1) != 0 && cell.position.x > 0,
-            right = (cell.number and 2) != 0 && cell.position.x < cell.size.width - 1,
+            up = (cell.number and 0b0100) != 0 && cell.position.y > 0,
+            down = (cell.number and 0b1000) != 0 && cell.position.y < gameField.size.height - 1,
+            left = (cell.number and 0b0001) != 0 && cell.position.x > 0,
+            right = (cell.number and 0b0010) != 0 && cell.position.x < gameField.size.width - 1,
             bit4by2 = (cell.number and 16) != 0
         )
         return directions

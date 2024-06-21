@@ -1,12 +1,8 @@
 package com.labirint.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,8 +11,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import com.labirint.Router
+import com.labirint.game.FieldCell
 import com.labirint.game.GameField
-import com.labirint.util.Localization
 import com.labirint.util.ProjectColors
 import pauseDialog
 
@@ -24,11 +20,13 @@ import pauseDialog
 @Composable
 fun gamePage(
     router: Router,
-    gameField: GameField
+    gameField: GameField,
+    currentCell: FieldCell,
+    onChangeCurrentCell: (FieldCell) -> Unit = {},
 ) {
+    println("gamePage: currentCell = ${currentCell.number}")
     val isPaused = remember { mutableStateOf(false) }
     val requester = remember { FocusRequester() }
-    var currentCell by remember { mutableStateOf(gameField.currentCell) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,14 +62,16 @@ fun gamePage(
                         gameModifiers = DrawGameCanvasModifiers(
                             size = 260.dp,
                             visibleNestedCells = 1,
-                            showDiagonals = false,
+                            showDiagonals = true,
                             isInteractive = true,
                         )
-                    ) {_gameField, cell ->
-                        println(cell.number)
-                        if (_gameField.isPossibleCellMove(cell)) {
-                            currentCell = cell
-                            gameField.currentCell = cell
+                    ) {cell ->
+                        if (cell.number < 0) {
+                            return@drawGameMinimap
+                        }
+                        val newCurrentCell = gameField.findCellById(cell.code)
+                        if (gameField.isPossibleCellMove(newCurrentCell, currentCell)) {
+                            onChangeCurrentCell(newCurrentCell)
                         }
                     }
                 }
