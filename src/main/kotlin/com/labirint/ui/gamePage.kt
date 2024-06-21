@@ -11,7 +11,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import com.labirint.Router
-import com.labirint.game.FieldCell
 import com.labirint.game.GameField
 import com.labirint.util.ProjectColors
 import pauseDialog
@@ -19,12 +18,10 @@ import pauseDialog
 
 @Composable
 fun gamePage(
-    router: Router,
-    gameField: GameField,
-    currentCell: FieldCell,
-    onChangeCurrentCell: (FieldCell) -> Unit = {},
+    router: Router
 ) {
-    println("gamePage: currentCell = ${currentCell.number}")
+    val gameField by remember { mutableStateOf(GameField().init()) }
+    var currentCell by remember { mutableStateOf(gameField.findStartCell()) }
     val isPaused = remember { mutableStateOf(false) }
     val requester = remember { FocusRequester() }
     Box(
@@ -71,7 +68,7 @@ fun gamePage(
                         }
                         val newCurrentCell = gameField.findCellById(cell.code)
                         if (gameField.isPossibleCellMove(newCurrentCell, currentCell)) {
-                            onChangeCurrentCell(newCurrentCell)
+                            currentCell = newCurrentCell
                         }
                     }
                 }

@@ -20,8 +20,6 @@ object Router {
     }
 
     private var currentPage by mutableStateOf(Page.GamePage)
-    val gameField by mutableStateOf(GameField().init())
-    var currentCell by mutableStateOf(gameField.findStartCell())
 
 
 
@@ -29,23 +27,11 @@ object Router {
         Page.MainMenu to PageConfig(Localization.getString("gameTitle")) { router -> mainMenu(router) },
         Page.SettingsPage to PageConfig(Localization.getString("settingsTitle")) { router -> settingsPage(router) },
         Page.NotFound to PageConfig(Localization.getString("pageNotFound")) { router -> notFound(router) },
-        Page.GamePage to PageConfig(Localization.getString("gameTitle")) { router -> setGamePage(router) },
+        Page.GamePage to PageConfig(Localization.getString("gameTitle")) { router -> gamePage(router) },
     )
 
     fun setPage(page: Page) {
         currentPage = page
-    }
-
-    @Composable
-    fun setGamePage(router: Router) {
-        gamePage(
-            router, gameField = gameField, currentCell = currentCell
-        ) {
-            println("MIAN go to cell ${it.number}")
-            currentCell = it
-            println("MIAN got cell ${currentCell.number} ||| ${it.number}")
-        }
-        currentPage = Page.GamePage
     }
 
     fun mainPage() {
