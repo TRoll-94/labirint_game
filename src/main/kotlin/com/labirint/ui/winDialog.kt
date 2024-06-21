@@ -10,9 +10,9 @@ import com.labirint.util.Localization
 
 
 @Composable
-fun pauseDialog(onResume: () -> Unit, onExit: () -> Unit) {
+fun winDialog(onNewGame: () -> Unit, onExit: () -> Unit) {
 
-    Dialog(onDismissRequest = { onResume() }) {
+    Dialog(onDismissRequest = { onNewGame() }) {
         // Подложка диалога
         Surface(
             shape = MaterialTheme.shapes.medium,  // Используем формы из текущей темы
@@ -22,17 +22,17 @@ fun pauseDialog(onResume: () -> Unit, onExit: () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(Localization.getString("game_paused"), style = MaterialTheme.typography.h6)
+                Text(Localization.getString("your_win"), style = MaterialTheme.typography.h6)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = {
-                        onResume()
+                        onNewGame()
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(Localization.getString("resume"))
+                    Text(Localization.getString("new_game"))
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
