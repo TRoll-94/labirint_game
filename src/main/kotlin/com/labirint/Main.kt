@@ -18,7 +18,7 @@ object Router {
         GamePage,
     }
 
-    private var currentPage by mutableStateOf(Page.GamePage)
+    private var currentPage by mutableStateOf(Page.MainMenu)
 
     private val pages = mapOf(
         Page.MainMenu to PageConfig(Localization.getString("gameTitle")) { router -> mainMenu(router) },

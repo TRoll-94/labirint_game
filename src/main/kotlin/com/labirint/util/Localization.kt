@@ -28,7 +28,7 @@ object Localization {
     }
 
     fun getLanguages(): List<String> {
-        return listOf("ru", "pl")
+        return listOf("ru", "pl", "en")
     }
 
     fun setLanguage(language: String, country: String = "") {
