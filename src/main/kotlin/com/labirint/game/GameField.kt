@@ -1,6 +1,7 @@
 package com.labirint.game
 
 import androidx.compose.runtime.Composable
+import com.labirint.util.Difficulty
 
 
 class GameField(
@@ -10,7 +11,7 @@ class GameField(
     var labirintGenerator = LabirintGenerator()
 
     fun generateField() {
-        labirintGenerator.WIDTH = size.width
+        labirintGenerator.WIDTH = Difficulty.getSizeByDifficulty()
         val testMap = labirintGenerator.generateArray()
         field = testMap.mapIndexed { y, row ->
             row.mapIndexed { x, cell ->
