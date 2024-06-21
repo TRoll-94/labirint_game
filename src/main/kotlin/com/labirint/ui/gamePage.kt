@@ -75,7 +75,7 @@ fun gamePage(
                         gameModifiers = DrawGameCanvasModifiers(
                             size = 260.dp,
                             visibleNestedCells = 1,
-                            showDiagonals = true,
+                            showDiagonals = false,
                             isInteractive = true,
                         )
                     ) {cell ->

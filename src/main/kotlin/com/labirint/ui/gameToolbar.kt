@@ -4,7 +4,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -28,12 +31,14 @@ fun gameToolbar(
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = ProjectColors.transparent, contentColor = ProjectColors.white
             ),
-            border = BorderStroke(0.dp, ProjectColors.white),
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier.padding(0.dp).height(24.dp).width(24.dp),
 
             ) {
-            Text("II", modifier = Modifier.padding(0.dp))
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "Menu",
+            )
         }
     }
 }
